@@ -7,13 +7,16 @@ use App\traits\TimeStampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\HasLifecycleCallbacks()]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimeStampTrait;
@@ -21,28 +24,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
+    #[Assert\NotBlank(message: 'This field is required')]
+    #[Assert\Email(message: 'This email is not valid')]
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
+    //#[Assert\NotBlank(message: 'This field is required')]
+    //#[Assert\Choice(choices: ['ROLE_USER', 'ROLE_ADMIN','ROLE_PROVIDER'],message: 'Select a valid role')]
     #[ORM\Column]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
+    //#[Assert\NotBlank(message: 'This field is required')]
+    //#[Assert\Length(min: 8,minMessage: 'Password must contain at least 8 characters')]
     #[ORM\Column]
     private ?string $password = null;
-
+    #[Assert\NotBlank(message: 'This field is required')]
+    #[Assert\Length(max: 50,maxMessage: 'Name cannot exceed 50 characters',)]
+    #[Assert\Regex(pattern: "/^[a-zA-ZÀ-ÿ '-]+$/u",message: 'The first name can only contain letters
+')]
     #[ORM\Column(length: 50)]
     private ?string $name = null;
-
+    #[Assert\Regex(pattern: '/^\+?[0-9\s\-]+$/',message: 'The phone number can only contain digits')]
+    #[Assert\Length(min: 8, max: 8,minMessage: 'the phone number must contain 8 digits')]
     #[ORM\Column(length: 50)]
     private ?string $phone_number = null;
-
+    #[Assert\Length(max: 255,maxMessage: 'The address cannot exceed 255 characters',)]
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
@@ -66,6 +78,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user')]
     private Collection $review;
+
+    #[ORM\Column]
+    private bool $isVerified = false;
 
     public function __construct()
     {
@@ -284,6 +299,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $review->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
