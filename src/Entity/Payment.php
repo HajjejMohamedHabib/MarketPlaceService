@@ -26,6 +26,10 @@ class Payment
     #[ORM\Column(length: 50)]
     private ?string $payment_status = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Order $orderr = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,6 +67,18 @@ class Payment
     public function setPaymentStatus(string $payment_status): static
     {
         $this->payment_status = $payment_status;
+
+        return $this;
+    }
+
+    public function getOrderr(): ?Order
+    {
+        return $this->orderr;
+    }
+
+    public function setOrderr(Order $orderr): static
+    {
+        $this->orderr = $orderr;
 
         return $this;
     }

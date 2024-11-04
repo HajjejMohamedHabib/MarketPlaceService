@@ -1,0 +1,48 @@
+{% extends 'adminTemplate.html.twig' %}
+
+{% block content %}
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center w-100">
+
+            <!-- Form Column -->
+            <div class="col-xl-5 col-lg-6 col-md-8">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-5">
+                        <!-- Form Heading -->
+                        <div class="text-center mb-4">
+                            <h1 class="h4 text-gray-900">Add a new category</h1>
+                        </div>
+
+                        <!-- Form Start -->
+                        {{ form_start(form, {'attr': {'class':'user'}}) }}
+
+                        <!-- Name Field -->
+                        <div class="form-group mb-3">
+                            {{ form_label(form.name, 'Name') }}
+                            {{ form_widget(form.name, {'attr': {'class':'form-control w-100', 'style': 'border-radius: 5px;'}}) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="form-group mb-3">
+                            {{ form_label(form.description, 'Description') }}
+                            {{ form_widget(form.description, {'attr': {'class':'form-control w-100', 'style': 'border-radius: 5px;'}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-group">
+                            <input type="submit" value="Add" class="btn btn-primary btn-user btn-block" style="border-radius: 5px;">
+                        </div>
+
+                        {{ form_end(form) }}
+                        <!-- Form End -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

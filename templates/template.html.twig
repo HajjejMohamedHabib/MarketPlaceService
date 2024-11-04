@@ -20,7 +20,9 @@
     <!-- Custom styles for our template -->
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-theme.css') }}" media="screen" >
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
-
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales-all.min.js"></script>
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="{{ asset('assets/js/html5shiv.js') }}"></script>
@@ -36,7 +38,14 @@
             border-radius: 50%; /* Makes the image circular */
             border: 2px solid #fff; /* Optional: Adds a white border around the image */
         }
+        .custDropDown{
+            max-height: 100px;
+            overflow-y: scroll;
+        }
+
     </style>
+    {% block style %}
+    {% endblock %}
 </head>
 
 <body>
@@ -50,13 +59,17 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav pull-right">
-                <li><a href="index.html">Home</a></li>
+                <li><a href="{{ path('app_first') }}">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">More Pages <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu custDropDown">
                         <li><a href="sidebar-left.html">Left Sidebar</a></li>
                         <li><a href="sidebar-right.html">Right Sidebar</a></li>
+
+
+
+
                     </ul>
                 </li>
                 <li><a href="contact.html">Contact</a></li>
@@ -64,8 +77,7 @@
                 <li class="dropdown">
                     <img src="{{ asset('assets/images/person.jpg') }}" class="circle-img dropdown-toggle" data-toggle="dropdown">
                     <ul class="dropdown-menu">
-                        <li><a href="sidebar-left.html">Sign In</a></li>
-                        <li><a href="sidebar-right.html">Sign Up</a></li>
+                        <li><a href="{{ path('app_logout') }}">logout</a></li>
                     </ul>
                 </li>
                 {% endif %}

@@ -1,0 +1,148 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}
+    Service List
+{% endblock %}
+
+{% block header %}
+    <header id="head">
+        <div class="container">
+            <div class="row mrt">
+                <h1 class="lead">EASY, SECURE, FAST</h1>
+                <p class="lead1">EASYSERV: The platform that connects service providers and clients with confidence.</p>
+                {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <p>
+                        <a class="btn btn-default btn-lg" href="{{ path('app_login') }}">SIGN IN</a>
+                        <a class="btn btn-action btn-lg" href="{{ path('app_register') }}">SIGN UP</a>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid" style="padding-left: 60px; padding-right: 60px; margin: 0;"> <!-- Ajouter 40px de padding à gauche et à droite -->
+        <div class="row no-gutters"> <!-- Retirer les marges entre les colonnes -->
+            <!-- Colonne pour les filtres de recherche alignée à gauche avec arrière-plan gris -->
+            <div class="col-md-3 col-sm-12" style="padding-left: 0;">
+                <div class="search-filters" style="padding: 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0; margin-top: 20px;">
+                    <h4>Search Filters</h4>
+                    <form method="GET" action="">
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" name="category" class="form-control form-control-sm">
+                                <option value="">All Categories</option>
+                                <option value="repair">Repair</option>
+                                <option value="maintenance">Maintenance</option>
+                                <!-- Ajoutez d'autres catégories ici -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price Range</label>
+                            <input type="text" id="price" name="price" class="form-control form-control-sm" placeholder="e.g., 50-100">
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">Minimum Rating</label>
+                            <input type="number" id="rating" name="rating" class="form-control form-control-sm" min="1" max="5" step="1">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm btn-block">Search</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Colonne pour l'affichage des services -->
+            <div class="col-md-9 col-sm-12" style="padding-right: 0; padding-left: 10px;">
+                <div class="service-list" style="box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); padding: 15px; border-radius: 8px; background-color: white; margin-top: 20px;">
+                    <h3>Available Services</h3>
+                    <div class="row">
+                        {% for service in services %}
+                            <div class="col-12 mb-4" style="margin-top: 20px;">
+                                <div class="card" style="display: flex; flex-direction: row; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); width: 100%; height: 300px;">
+
+                                    <!-- Conteneur de l'image -->
+                                    <div style="width: 150px; height: 100%; display: flex;">
+                                        <img src="{{ asset('uploads/servicePhoto/' ~ service.image[0]) }}" alt="{{ service.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+
+                                    <!-- Contenu de la carte -->
+                                    <div class="card-body" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; max-width: calc(100% - 430px);">
+                                        <h5 class="card-title text-center">{{ service.title }}</h5>
+
+                                        {#<p class="card-text text-center">Service: {{ service.title }}</p>
+                                        <p class="card-text text-center">User: {{ service.user.name }}</p>
+                                        <p class="card-text text-center">Location: {{ service.location }}</p>
+                                        <p class="card-text text-center">Price: {{ service.price }} TND</p>#}
+
+                                        <!-- Description avec hauteur fixe et scroll si trop longue -->
+                                        <div style="flex-grow: 1; overflow-y: auto; max-height: 80px;">
+                                            <p class="card-text">{{ service.description }}</p>
+                                        </div>
+
+                                        <!-- Bouton au bas de la carte -->
+                                        <div style="margin-top: auto;display: flex; flex-direction: column; align-items: center;" >
+                                            <a href="{{ path('details.service',{id:service.id}) }}" class="btn btn-primary btn-block" style="max-width: 300px">View Details</a>
+                                            <a href="{{ path('add.reservation',{service_id:service.id}) }}" class="btn btn-success btn-block" style="margin-top: 10px;max-width: 300px">Book Now
+                                            </a>
+                                        </div>
+                                        <div class="rating" style="text-align: center">
+                                            <span class="star" style="font-size: 1.5em;color: gold;">★</span>
+                                            <span class="star" style="font-size: 1.5em;color: gold;">★</span>
+                                            <span class="star" style="font-size: 1.5em;color: gold;">★</span>
+                                            <span class="star" style="font-size: 1.5em;color: gold;">★</span>
+                                            <span class="star" style="font-size: 1.5em;color: gold;">☆</span>  <!-- Exemple : 4 sur 5 -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Conteneur pour la disponibilité à droite -->
+                                    <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin-left: 10px; display: flex; flex-direction: column; justify-content: flex-start; height: 100%; width: 280px;">
+                                        <div style="margin-top: 0; padding-top: 5px;">
+                                            <strong style="display: block; margin-bottom: 20px;">Availability:</strong>
+                                            {% for dayW, day in service.availability %}
+                                                {% if day.unavailable %}
+                                                    <p>{{ dayW|capitalize }} : Unavailable</p>
+                                                {% else %}
+                                                    <p>{{ dayW|capitalize }} from: {{ day.morning }} to: {{ day.afternoon }}</p>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Écouteurs d'événements pour les éléments existants
+    var categoryFilter = document.getElementById('category');
+    if (categoryFilter) {
+    categoryFilter.addEventListener('change', function() {
+    // Ajouter le code pour filtrer les services par catégorie
+});
+}
+
+    var priceInput = document.getElementById('price');
+    if (priceInput) {
+    priceInput.addEventListener('input', function() {
+    // Ajouter le code pour filtrer par prix
+});
+}
+
+    var ratingInput = document.getElementById('rating');
+    if (ratingInput) {
+    ratingInput.addEventListener('input', function() {
+    // Ajouter le code pour filtrer par évaluation
+});
+}
+});
+</script>
+{% endblock %}

@@ -64,7 +64,7 @@ class RegistrationController extends AbstractController
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
-                    ->from(new Address('mohamed.test.noreplay@gmail.com', 'easyServ team'))
+                    ->from(new Address('mohamedhabibhajjej@gmail.com', 'easyServ team'))
                     ->to((string) $user->getEmail())
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
@@ -100,5 +100,40 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Your email address has been verified.');
 
         return $this->redirectToRoute('app_login');
+    }
+    #[Route('/user/update/{id}', name: 'update.user')]
+public function updateUser(Request $request, UserPasswordHasherInterface $userPasswordHasher,
+                           Security $security, EntityManagerInterface $entityManager,
+                           SluggerInterface $slugger,User $user,
+                           #[Autowire('%kernel.project_dir%/public/uploads/profilePhoto')] string $profilePhotoDirectory
+    ):Response{
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var string $plainPassword */
+            /** @var UploadedFile $photo */
+            $plainPassword = $form->get('plainPassword')->getData();
+            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            // begin upload photo
+            $photo = $form->get('photo')->getData();
+            if ($photo) {
+                $originalFilename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$photo->guessExtension();
+                try {
+                    $photo->move($profilePhotoDirectory, $newFilename);
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+                $user->setProfileImage($newFilename);
+            } // end upload photo
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+
+        return $this->render('registration/updateUser.html.twig', [
+            'registrationForm' => $form,
+        ]);
     }
 }

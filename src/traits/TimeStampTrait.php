@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\HasLifecycleCallbacks()]
 trait TimeStampTrait
 {
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
     public function getCreatedAt(): ?\DateTimeInterface
     {
@@ -21,6 +21,11 @@ trait TimeStampTrait
     }
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
+    {
+        $this->createdAt = new \DateTime();
+    }
+    #[ORM\PreUpdate]
+    public function setUpdatedAtValue(): void
     {
         $this->createdAt = new \DateTime();
     }

@@ -9,7 +9,7 @@
     <div class="container">
 
         <ol class="breadcrumb">
-            <li><a href="index.html">Home</a></li>
+            <li><a href="{{ path('app_first') }}">Home</a></li>
             <li class="active">User access</li>
         </ol>
 
@@ -25,7 +25,7 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <h3 class="thin text-center">Sign in to your account</h3>
-                            <p class="text-center text-muted">Lorem ipsum dolor sit amet, <a href="signup.html">Register</a> adipisicing elit. Quo nulla quibusdam cum doloremque incidunt nemo sunt a tenetur omnis odio. </p>
+                            <p class="text-center text-muted">Lorem ipsum dolor sit amet, <a href="{{ path('app_register') }}">Register</a> adipisicing elit. Quo nulla quibusdam cum doloremque incidunt nemo sunt a tenetur omnis odio. </p>
                             <hr>
 
                             <form method="post">
@@ -48,7 +48,7 @@
 
                                 <div class="row">
                                     <div class="col-lg-8">
-                                        <b><a href="">Forgot password?</a></b>
+                                        <b><a href="{{ path('forgetpassword') }}">Forgot password?</a></b>
                                     </div>
                                     <div class="col-lg-4 text-right">
                                         <button class="btn btn-action" type="submit">Sign in</button>

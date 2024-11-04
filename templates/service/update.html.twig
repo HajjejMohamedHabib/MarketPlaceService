@@ -1,0 +1,111 @@
+{% extends 'template.html.twig' %}
+{% block header %}
+    <header id="head" class="secondary"></header>
+{% endblock %}
+{% block body %}
+    <div class="container">
+
+        <ol class="breadcrumb">
+            <li><a href="index.html">Home</a></li>
+            <li class="active">Registration</li>
+        </ol>
+
+        <div class="row">
+
+            <!-- Article main content -->
+            <article class="col-xs-12 maincontent">
+                <header class="page-header">
+                    <h1 class="page-title">Registration</h1>
+                </header>
+
+                <!-- Panel to wrap both form and calendar -->
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <!-- Heading for both form and calendar -->
+                        <h3 class="thin text-center">Add a new service</h3>
+                        <p class="text-center text-muted">Add a new service to reach more clients.
+                            Provide details, set your price, and start receiving requests to grow your business.</p>
+                        <hr>
+
+                        <div class="row">
+                            <!-- Calendar Section with Label -->
+                            <div class="col-md-4 col-sm-12 calendar-section">
+                                <label for="calendar">Availability</label> <!-- Label above the calendar placeholder -->
+                                {{ form_start(form,{'attr':{'novalidate':'novalidate'}}) }}
+                                <div class="scrollable-container" style="max-width: 250px;max-height: 210px; overflow-y: auto; border: 1px solid #ccc; padding: 20px 20px;">
+                                    {% for dayField in form.availability %}
+                                        <h4>{{ dayField.vars.label }}</h4>
+
+                                        {# Morning slot #}
+                                        <div class="form-group">
+                                            <label for="{{ dayField.children.morning.vars.id }}">From:</label>
+                                            {{ form_widget(dayField.children.morning, {'attr': {'class': 'time-picker'}}) }}
+                                        </div>
+
+                                        {# Afternoon slot #}
+                                        <div class="form-group">
+                                            <label for="{{ dayField.children.afternoon.vars.id }}">To:</label>
+                                            {{ form_widget(dayField.children.afternoon, {'attr': {'class': 'time-picker'}}) }}
+                                        </div>
+
+                                        {# Unavailable checkbox #}
+                                        <div class="form-group">
+                                            <label for="{{ dayField.children.unavailable.vars.id }}">Unavailable:</label>
+                                            {{ form_widget(dayField.children.unavailable) }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Form Section -->
+                            <div class="col-md-6 col-md-offset-1 col-sm-12 form-section">
+
+
+                                <div class="top-margin">
+                                    {{ form_label(form.title,'Title') }}
+                                    {{ form_widget(form.title,{'attr':{'class':'form-control'}}) }}
+                                    {{ form_errors(form.title) }}
+                                </div>
+                                <div class="top-margin">
+                                    {{ form_label(form.description,'Description') }}
+                                    {{ form_widget(form.description,{'attr':{'class':'form-control'}}) }}
+                                    {{ form_errors(form.description) }}
+                                </div>
+                                <div class="top-margin">
+                                    {{ form_label(form.price,'Price') }}
+                                    {{ form_widget(form.price,{'attr':{'class':'form-control'}}) }}
+                                    {{ form_errors(form.price) }}
+                                </div>
+                                <div class="top-margin">
+                                    {{ form_label(form.location,'Location') }}
+                                    {{ form_widget(form.location,{'attr':{'class':'form-control'}}) }}
+                                    {{ form_errors(form.location) }}
+                                </div>
+                                <div class="top-margin">
+                                    {{ form_label(form.category) }}
+                                    {{ form_widget(form.category,{'attr':{'class':'form-control'}}) }}
+                                    {{ form_errors(form.category) }}
+                                </div>
+                                <div class="top-margin">
+                                    {{ form_widget(form.photos) }}
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                    </div>
+                                    <div class="col-lg-4 text-right">
+                                        <button class="btn btn-action" type="submit">Update</button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </article>
+            <!-- /Article -->
+
+        </div>
+    </div>	<!-- /container -->
+{% endblock %}

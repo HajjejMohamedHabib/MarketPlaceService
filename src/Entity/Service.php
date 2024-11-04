@@ -52,17 +52,12 @@ class Service
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'service')]
     private Collection $review;
 
-    /**
-     * @var Collection<int, Category>
-     */
-    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'service')]
-    private Collection $categories;
-
+    #[ORM\ManyToOne(inversedBy: 'service')]
+    private ?Category $category = null;
     public function __construct()
     {
         $this->orders = new ArrayCollection();
         $this->review = new ArrayCollection();
-        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -214,32 +209,14 @@ class Service
         return $this;
     }
 
-    /**
-     * @return Collection<int, Category>
-     */
-    public function getCategories(): Collection
+    public function getCategory(): ?Category
     {
-        return $this->categories;
+        return $this->category;
     }
 
-    public function addCategory(Category $category): static
+    public function setCategory(?Category $category): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->setService($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCategory(Category $category): static
-    {
-        if ($this->categories->removeElement($category)) {
-            // set the owning side to null (unless already changed)
-            if ($category->getService() === $this) {
-                $category->setService(null);
-            }
-        }
+        $this->category = $category;
 
         return $this;
     }

@@ -26,18 +26,14 @@ class Order
     #[ORM\Column(nullable: true)]
     private ?float $amount = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $payment_status = null;
-
     #[ORM\ManyToOne(inversedBy: 'orderr')]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     private ?Service $service = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Payment $payment = null;
-
+    #[ORM\Column(length: 50)]
+    private ?string $payment_method = null;
     public function getId(): ?int
     {
         return $this->id;
@@ -79,18 +75,6 @@ class Order
         return $this;
     }
 
-    public function getPaymentStatus(): ?string
-    {
-        return $this->payment_status;
-    }
-
-    public function setPaymentStatus(string $payment_status): static
-    {
-        $this->payment_status = $payment_status;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -115,14 +99,14 @@ class Order
         return $this;
     }
 
-    public function getPayment(): ?Payment
+    public function getPaymentMethod(): ?string
     {
-        return $this->payment;
+        return $this->payment_method;
     }
 
-    public function setPayment(?Payment $payment): static
+    public function setPaymentMethod(string $payment_method): static
     {
-        $this->payment = $payment;
+        $this->payment_method = $payment_method;
 
         return $this;
     }
